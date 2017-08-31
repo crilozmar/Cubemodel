@@ -1,0 +1,483 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage {graphicx} 
+\usepackage{color}
+\usepackage{units}
+\usepackage{textcomp}
+%\usepackage{a4wide}
+ \usepackage[a4paper, margin = 2cm, hmargin = 2cm, top = 1cm, includehead, includefoot, bindingoffse t= 1cm, twoside]{geometry} 
+\usepackage[charter]{mathdesign} 
+%\usepackage{colortbl}
+%\definecolor{lightgrey}{rgb}{0.59, 0.44, 0.09}
+%\usepackage{url} 
+
+%\setcounter{page}{-3}
+
+
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\setlength{\headheight}{15pt}
+%\pagestyle{fancyplain}
+%\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+%\lhead{}
+
+%\usepackage{wallpaper}
+\end_preamble
+\use_default_options true
+\begin_modules
+figs-within-sections
+tabs-within-sections
+eqs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Part*
+The Muenster IceCube Display
+\begin_inset Newline newline
+\end_inset
+
+Software documentation
+\end_layout
+
+\begin_layout Section
+What you need
+\end_layout
+
+\begin_layout Itemize
+Hardware:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $3\times$
+\end_inset
+
+ Teensy 3.2 connected to computer via USB, power supply and synchronized
+ with each other
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $1\times$
+\end_inset
+
+ LED strip (at least) properly connected to one of the Teensys and power
+ supply
+\end_layout
+
+\begin_layout Itemize
+Power supply (both the Teensys and the LED strips need 
+\begin_inset Formula $\unit[5]{V}$
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Software
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+IceTray software V17-03-00 
+\begin_inset Newline newline
+\end_inset
+
+(http://code.icecube.wisc.edu/svn/meta-projects/offline-software/releases/V17-03-00
+/)
+\end_layout
+
+\begin_layout Itemize
+Teensy Loader (https://www.pjrc.com/teensy/loader.html)
+\end_layout
+
+\begin_layout Itemize
+Python package 
+\family typewriter
+pyusb
+\family default
+ (get it with 
+\family typewriter
+pip
+\family default
+ AND 
+\family typewriter
+pip3
+\family default
+)
+\end_layout
+
+\begin_layout Itemize
+All the stuff that is in folders 
+\family typewriter
+muenster_icecube_display
+\family default
+ and 
+\family typewriter
+teensy32_stuff
+\end_layout
+
+\begin_layout Itemize
+A nice 
+\family typewriter
+.i3
+\family default
+ file
+\end_layout
+
+\end_deeper
+\begin_layout Section
+How to set this up
+\end_layout
+
+\begin_layout Itemize
+Test whether 
+\family typewriter
+pyusb
+\family default
+ works correctly by running Python interactively (should look something
+ like the following):
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ python3
+\begin_inset Newline newline
+\end_inset
+
+Python 3.4.0 ...
+\begin_inset Newline newline
+\end_inset
+
+>>> import usb
+\begin_inset Newline newline
+\end_inset
+
+>>> usb.version_info
+\begin_inset Newline newline
+\end_inset
+
+(1, 0, 0, 'b2)
+\end_layout
+
+\begin_layout Itemize
+Add the following rules from the 
+\family typewriter
+teensy32_stuff
+\family default
+ folder so you can run all scripts as normal user:
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ sudo cp 90-icecube.rules /etc/udev/rules.d/ 
+\begin_inset Newline newline
+\end_inset
+
+$ sudo groupadd leddisplay 
+\begin_inset Newline newline
+\end_inset
+
+$ usermod -a -G leddisplay [your username]
+\end_layout
+
+\begin_layout Itemize
+Load the 
+\family typewriter
+.hex
+\family default
+ file in the 
+\family typewriter
+teensy32_stuff
+\family default
+ folder onto all three Teensys by means of the Teensy loader (explained
+ on the Teensy webpage)
+\end_layout
+
+\begin_layout Itemize
+Run the script 
+\family typewriter
+display_info.py
+\family default
+ from the 
+\family typewriter
+muenster_icecube_display
+\family default
+ folder to verify communication with the boards
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ python3 display_info.py
+\end_layout
+
+\begin_layout Itemize
+Now you have to load the display configuration (which strings are located
+ where in the model) onto the Teensys.
+ You do this by means of the 
+\family typewriter
+update_eeprom.py
+\family default
+ script and the configuration file 
+\family typewriter
+display_config_muenster.json
+\family default
+.
+ Should look something like this:
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ sudo python3 update_eeprom.py display_config_muenster.json 
+\begin_inset Newline newline
+\end_inset
+
+Found device 
+\begin_inset Newline newline
+\end_inset
+
+Please select one of the available device configurations to configure the
+ device: 
+\family default
+(enter 
+\family typewriter
+front
+\family default
+, 
+\family typewriter
+center
+\family default
+ or 
+\family typewriter
+back
+\family default
+ here)
+\family typewriter
+
+\begin_inset Newline newline
+\end_inset
+
+Selected configuration: Configuration uploaded.
+ Please mark the device to be able to match it with its serial number or
+ configuration.
+ Please reboot the device for the new configuration to take effect.
+\end_layout
+
+\begin_layout Itemize
+Verify wether writing new configuration worked by running 
+\family typewriter
+display_info.py
+\family default
+ again; should get a slightly different output.
+\end_layout
+
+\begin_layout Subsection
+Testing and debugging
+\end_layout
+
+\begin_layout Itemize
+The script 
+\family typewriter
+test_draw.py
+\family default
+ in the 
+\family typewriter
+muenster_icecube_display
+\family default
+ folder can be used for identifying your channels.
+ The syntax is:
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ python3 test_draw.py -m string -c 86 -d 1
+\begin_inset Newline newline
+\end_inset
+
+
+\family default
+The above command makes one string light up after the other (assuming 86
+ strings in total) for one second.
+ Have a look at the script for more options like rgb mode and offset.
+\end_layout
+
+\begin_layout Subsection
+Controlling the display with steamshovel
+\end_layout
+
+\begin_layout Itemize
+Open steamshovel:
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+$ [directory of IceTray software]/build/ ./env-shell.sh 
+\begin_inset Newline newline
+\end_inset
+
+$ steamshovel
+\end_layout
+
+\begin_layout Itemize
+It is important at this point that the pyusb package is installed via pip,
+ since steamshovel runs on Python2 and not Python3
+\end_layout
+
+\begin_layout Itemize
+Click the button 
+\begin_inset Quotes eld
+\end_inset
+
+Add...
+\begin_inset Quotes erd
+\end_inset
+
+ on the right and select 
+\family typewriter
+LedDisplay()
+\end_layout
+
+\begin_layout Itemize
+Select settings 
+\family typewriter
+I3Geometry
+\family default
+ and e.g.
+ 
+\family typewriter
+InIcePulses
+\family default
+ (see figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:steamshovel_screenshot_01"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+When you run your .i3 file, the onboard LEDs on the Teensys should flicker
+ which means data is transmitted.
+ The LED strips should light up in synch with the steamshovel event.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename steamshovel_170710.png
+	lyxscale 50
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:steamshovel_screenshot_01"
+
+\end_inset
+
+A steamshovel screenshot with a possible configuration.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
