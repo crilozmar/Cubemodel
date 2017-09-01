@@ -45,16 +45,17 @@
 %\lhead{}
 
 %\usepackage{wallpaper}
-
+\title{The M\"unster IceCube Display\protect \\
+Software documentation}
+\date{}
 \makeatother
 
 \begin{document}
-
-\part*{The Muenster IceCube Display\protect \\
-Software documentation}
+\maketitle
 
 
-\section{What you need}
+\section{Installation}
+\subsection{What you need}
 \begin{itemize}
 \item Hardware:
 
@@ -79,7 +80,7 @@ and \texttt{teensy32\_stuff}
 \end{itemize}
 \end{itemize}
 
-\section{How to set this up}
+\subsection{How to set this up}
 \begin{itemize}
 \item Test whether \texttt{pyusb} works correctly by running Python interactively
 (should look something like the following):\\
@@ -127,7 +128,7 @@ The above command makes one string light up after the other (assuming
 more options like rgb mode and offset.
 \end{itemize}
 
-\subsection{Controlling the display with steamshovel}
+\section{Controlling the display with steamshovel}
 \begin{itemize}
 \item Open steamshovel:\\
 \texttt{\$ {[}directory of IceTray software{]}/build/ ./env-shell.sh
