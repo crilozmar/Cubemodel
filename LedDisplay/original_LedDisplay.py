@@ -55,6 +55,7 @@ try:
 except:
     raise ImportError("Failed to load pyUSB. LED displays are not supported.")
 
+
 class DisplayLed(object):
     "Class representing the color of an RGB LED with time dependent color and brightness."
 
@@ -242,7 +243,7 @@ class DisplayController:
                 , self.__USB_VND_REQ_EEPROM_READ
                 , 0
                 , offset
-                , lengthRangeSetting
+                , length
             )
             return bytes(data)
         except Exception as e:
@@ -497,7 +498,7 @@ class LogicalDisplay:
         # a lock should be used to ensure that the either the new frame gets transmitted or the
         # new frame is queued. In no case should the new frame be dropped because we just happen
         # to be handling an old frame.
-        min_delta = 1./10
+        min_delta = 1./15
 
         self.__data_buffer_lock.acquire()
         self.__data_buffer = data
@@ -630,9 +631,10 @@ class DisplayManager:
         return groups
 
 try:
-    from icecube.shovelart import PyArtist
-    from icecube.shovelart import RangeSetting, ChoiceSetting, I3TimeColorMap
-    from icecube.shovelart import PyQColor, TimeWindowColor, StepFunctionFloat
+    #from icecube.shovelart import PyArtist
+    #from icecube.shovelart import RangeSetting, ChoiceSetting, I3TimeColorMap
+    #from icecube.shovelart import PyQColor, TimeWindowColor, StepFunctionFloat
+    from icecube.shovelart import *
     from icecube.dataclasses import I3RecoPulseSeriesMapMask, I3RecoPulseSeriesMapUnion
 
     class LedDisplay(PyArtist):
@@ -640,7 +642,6 @@ try:
         _SETTING_DEVICE = "Device"
         _SETTING_COLOR_STATIC = "Static color"
         _SETTING_BRIGHTNESS_STATIC = "Static brightness"
-        _SETTING_MIN_BRIGHTNESS = "Minimum brightness"
         _SETTING_COLOR = "Colormap"
         _SETTING_INFINITE_DURATION = "Use infinite pulses"
         _SETTING_DURATION = "Finite pulse duration (log10 ns)"
@@ -679,8 +680,7 @@ try:
             self.addSetting(self._SETTING_DEVICE, ChoiceSetting(device_descriptions, 0))
             self.addSetting(self._SETTING_COLOR_STATIC, PyQColor.fromRgb(255, 0, 255))
             self.addSetting(self._SETTING_BRIGHTNESS_STATIC, RangeSetting(0.0, 1.0, 32, 0.5))
-            self.addSetting(self._SETTING_MIN_BRIGHTNESS, RangeSetting(0.0, 0.3, 32, 0))
-            self.addSetting(self._SETTING_COMPRESSION_POWER, RangeSetting(0.0, 1.0, 40, 0.9))
+            self.addSetting(self._SETTING_COMPRESSION_POWER, RangeSetting(0.0, 1.0, 40, 0.18))
             self.addSetting(self._SETTING_COLOR, I3TimeColorMap())
             self.addSetting(self._SETTING_INFINITE_DURATION, True)
             self.addSetting(self._SETTING_DURATION, RangeSetting(1.0, 6.0, 40, 5.0))
@@ -743,7 +743,7 @@ try:
                 duration = None
             else:
                 duration = 10**self.setting(self._SETTING_DURATION)
-                
+
             # content of led_pulses: {led : [(time, charge-like)]} {int : [(float, float)]}
             led_pulses = {}
 
@@ -797,8 +797,6 @@ try:
             led_curves = {}
             normalisation = max_sum_charges
             power = self.setting(self._SETTING_COMPRESSION_POWER)
-            factor = self.setting(self._SETTING_BRIGHTNESS_STATIC)
-            min_brightness = self.setting(self._SETTING_MIN_BRIGHTNESS)
             for led in charges:
                 brightness = StepFunctionFloat(0)
                 pulses = charges[led]
@@ -817,11 +815,7 @@ try:
                         while pulses[head][0]+duration > t and head >= 0:
                             accumulated_charge += pulses[head][1]
                             head -= 1
-                        brightness_value = ((accumulated_charge/normalisation)**power)*factor
-                        if self.setting(self._SETTING_MIN_BRIGHTNESS) > 0:
-                            if brightness_value < min_brightness:
-                                brightness_value = min_brightness
-                        brightness.add(brightness_value, t)
+                        brightness.add((accumulated_charge/normalisation)**power, t)
                         # If the current sequence doesn't overlap with the next pulse, reset the
                         # brightness and register the new series starting point
                         if tail < len(pulses)-1 and t+duration < pulses[tail+1][0]:
@@ -842,24 +836,15 @@ try:
                         while tail < len(pulses):
                             accumulated_charge += pulses[tail][1]/normalisation
                             tail += 1
-                        brightness_value = (accumulated_charge**power)*factor
-                        if self.setting(self._SETTING_MIN_BRIGHTNESS) > 0:
-                            if brightness_value < min_brightness:
-                                brightness_value = min_brightness
-                        brightness.add(brightness_value, t+duration)
+                        brightness.add(accumulated_charge**power, t+duration)
                         head += 1
-
                     color = TimeWindowColor(output, t0s, color_map)
                 else:
                     accumulated_charge = 0.0
                     color = TimeWindowColor(output, t0, color_map)
                     for t, q in pulses:
                         accumulated_charge += q/normalisation
-                        brightness_value = (accumulated_charge**power)*factor
-                        if self.setting(self._SETTING_MIN_BRIGHTNESS) > 0:
-                            if brightness_value < min_brightness:
-                                brightness_value = min_brightness
-                        brightness.add(brightness_value, t)
+                        brightness.add(accumulated_charge**power, t)
 
                 led_curves[led] = self._display.led_class(brightness.value, color.value)
 
@@ -941,6 +926,8 @@ try:
 
         def _cleanupEvent(self):
             self._leds = {}
+
+
 except:
     logger.debug("LedDispay steamshovel artist not defined")
 
