@@ -242,7 +242,7 @@ class DisplayController:
                 , self.__USB_VND_REQ_EEPROM_READ
                 , 0
                 , offset
-                , length
+                , lengthRangeSetting
             )
             return bytes(data)
         except Exception as e:
@@ -679,8 +679,8 @@ try:
             self.addSetting(self._SETTING_DEVICE, ChoiceSetting(device_descriptions, 0))
             self.addSetting(self._SETTING_COLOR_STATIC, PyQColor.fromRgb(255, 0, 255))
             self.addSetting(self._SETTING_BRIGHTNESS_STATIC, RangeSetting(0.0, 1.0, 32, 0.5))
-            self.addSetting(self._SETTING_MIN_BRIGHTNESS, RangeSetting(0.0, 0.3, 32, 0.5))
-            self.addSetting(self._SETTING_COMPRESSION_POWER, RangeSetting(0.0, 1.0, 40, 0.18))
+            self.addSetting(self._SETTING_MIN_BRIGHTNESS, RangeSetting(0.0, 0.3, 32, 0))
+            self.addSetting(self._SETTING_COMPRESSION_POWER, RangeSetting(0.0, 1.0, 40, 0.9))
             self.addSetting(self._SETTING_COLOR, I3TimeColorMap())
             self.addSetting(self._SETTING_INFINITE_DURATION, True)
             self.addSetting(self._SETTING_DURATION, RangeSetting(1.0, 6.0, 40, 5.0))
