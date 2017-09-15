@@ -73,8 +73,8 @@ and power supply
 (\url{http://code.icecube.wisc.edu/svn/meta-projects/offline-software/releases/V17-03-00/})
 \item Teensyduino (\url{https://www.pjrc.com/teensy/td_download.html}) and an Arduino version compatible with it (\url{https://www.arduino.cc/en/Main/Software})
 \item Teensy Loader (\url{https://www.pjrc.com/teensy/loader.html})
-\item Python package \texttt{pyusb} (get it with \texttt{pip} AND \texttt{pip3})
-\item All the stuff that is in folders \texttt{muenster\_icecube\_display}
+\item Python package \texttt{pyusb} (get it with \texttt{pip} AND \texttt{pip3}). It is important at that the pyusb package is installed via pip and pip3, since steamshovel runs on Python2 and the EEPROM scripts in Python3
+\item All the stuff from folders \texttt{muenster\_icecube\_display}
 and \texttt{teensy32\_stuff}
 \item A nice \texttt{.i3} file
 \end{itemize}
@@ -105,7 +105,7 @@ located where in the model) onto the Teensys. You do this by means
 of the \texttt{update\_eeprom.py} script and the configuration file
 \texttt{display\_config\_muenster.json}. Should look something like
 this:\\
-\texttt{\$ sudo python3 update\_eeprom.py display\_config\_muenster.json
+\texttt{\$ python3 update\_eeprom.py display\_config\_muenster.json -f
 }~\\
 \texttt{Found device }~\\
 \texttt{Please select one of the available device configurations to
@@ -130,12 +130,12 @@ more options like rgb mode and offset.
 
 \section{Controlling the display with steamshovel}
 \begin{itemize}
-\item Open steamshovel:\\
-\texttt{\$ {[}directory of IceTray software{]}/build/ ./env-shell.sh
+\item Open a shell with Icetray:\\
+\texttt{\$ {Icetray or [}directory of IceTray software{]}/build/ ./env-shell.sh
 }~\\
+\item You should have seen a welcome message. Now start steamshovel:
 \texttt{\$ steamshovel}
-\item It is important at this point that the pyusb package is installed
-via pip, since steamshovel runs on Python2 and not Python3
+
 \item Click the button ``Add...'' on the right and select \texttt{LedDisplay()}
 \item Select settings \texttt{I3Geometry} and e.g. \texttt{HLCPulses}
 (see figure \ref{fig:steamshovel_screenshot_01})

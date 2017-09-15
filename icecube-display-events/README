@@ -3,4 +3,9 @@ DoubleBang_EventViews.i3.bz2      Simulated high engery tau neutrins.
 FRF_oneG.i3.gz                    SLOP triggers (shows noise nicely).
 muonBundlesForEvent_oneG.i3.gz    Muon bundles going through IceCube. Works well combined with an IceTop display.
 testing.i3			  File for testing the model
+simulation_cascades.i3		  Cascades from simulations
+simulation_tracks.i3		  Tracks from simulations
+simulation_highE_alls.i3	  High energetic events from simulations
+iceproperties.i3		  File to show the ice layer structure
+BigBird.i3			  Obviously, the Big Bird
 
